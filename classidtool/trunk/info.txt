@@ -1,0 +1,30 @@
+Info:
+Offset values:
+
+USA
+---
+hex: 29BDA
+dec: 170970
+
+Europe
+------
+hex: 290C6
+dec: 168134
+
+Japan
+-----
+hex: 2900A
+dec: 167946
+
+Korea
+-----
+hex: 290E2
+dec: 168162
+
+----------------------
+
+Reigion Value names:
+USA: "USA"
+Europe: "EUR"
+Japan: "JAP"
+Korea: "KOR"
