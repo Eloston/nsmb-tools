@@ -28,3 +28,9 @@ USA: "USA"
 Europe: "EUR"
 Japan: "JAP"
 Korea: "KOR"
+
+----------------------
+
+Database file specs:
+
+{ClassID#Name}

@@ -1,0 +1,20 @@
+ClassID Tool
+
+By nsmbhacking
+
+Summary:
+
+ClassID Tool is a tool to modify, read, and lookup names for Class IDs from an extracted Overlay0 from a NSMB ROM. All NSMB ROM Regions are supported.
+
+Requirements:
+
+Python 3.2.2
+Overlay0
+
+How to run the tool:
+
+Double-click on run.py, or run 'python run.py'
+
+Contact:
+
+Please see the nsmb-tools project page, and contact the owner of the project.
