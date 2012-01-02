@@ -1,0 +1,261 @@
+{20#Nothing}
+{21#Crash sprite}
+{22#Nothing}
+{23#Tube Piranha Plant facing Top}
+{24#Tube Piranha Plant facing Bottom}
+{25#Tube Piranha Plant facing Right}
+{26#Tube Piranha Plant facing Left}
+{28#Cheep Cheep}
+{29#Giant Cheep Cheep}
+{30#Cheep-Cheep with coin trail}
+{31#Item Spawning}
+{33#Vs. Battle Star}
+{35#Bob-Omb}
+{36#End-of-Level Flag}
+{37#Thwomp}
+{38#Giant Thwomp}
+{39#Lakitu}
+{40#Spiny}
+{41#Boo}
+{42#Balloon Boo}
+{43#Monty Tank boss}
+{44#Chain Chomp with Log}
+{45#Chain Chomp without log}
+{46#Unused}
+{47#Flip Fence Side}
+{48#Large Flip Fence Side}
+{49#Nothing}
+{50#Bubbles From Tube}
+{51#Upside Down Bubbles From Tube}
+{52#Right Bubbles From Tube}
+{53#Left Bubbles From Tube}
+{54#Buzzy Beetle}
+{55#Dry Bones}
+{56#Giant Dry Bones}
+{57#Fire Ball from lava (Podoboo)}
+{58#Bullet Bill}
+{59#Lakitu Spawner}
+{60#Random Cheep-Cheep Generator}
+{61#Shark Generator}
+{62#Increase chance of drops on Mega-Mario groundpound}
+{63#Falling Scuttle Bug}
+{64#Enemy-in-Pipe Generator}
+{65#Rotating Fire Bar}
+{66#Coin / Coin in bubble}
+{67#Star Coin}
+{68#Hammer Brother}
+{69#Hammer Brother spawn point}
+{70#Giant Hammer Bro}
+{73#Whomp}
+{74#Shark (No generator)}
+{75#Eel}
+{76#Giant Eel}
+{77#Arrow Sign}
+{79#Dorrie}
+{80#Red Coin}
+{81#Water Bug}
+{82#Expandable Block}
+{83#Goomba}
+{84#Paragoomba}
+{85#Mini Goomba}
+{86#On/Off Switch}
+{87#Warp to Level}
+{88#Fire Bro}
+{89#Boomerang Bro}
+{90#Swooper}
+{91#Snailicorn}
+{92#Falling coin}
+{93#Glitched boss key?}
+{94#Koopa Troopa}
+{95#Koopa Paratroopa}
+{96#Koopa on Fence}
+{98#Pokey}
+{99#Piranha Plant}
+{100#Giant Piranha Plant}
+{101#Fire Spitting Piranha Plant}
+{102#Giant Fire Spitting Piranha Plant}
+{103#Small Spiked Ball}
+{104#Spiked Ball Activator}
+{105#Purple tilting mushroom}
+{106#Jumping Fire Snake}
+{107#Flame Chomp}
+{110#Amp (Electric Ball)}
+{111#Wiggler}
+{112#Cheep-Chomp}
+{113#Bowser Jr. boss}
+{114#Boss Activator}
+{115#Princess Peach}
+{116#Giant Bowser/pot/Bowser Jr.}
+{117#Hanging Scuttle Bug}
+{118#Money Bag}
+{119#Petey Piranha}
+{120#Broozer}
+{123#Roof Spiny}
+{124#Underwater Bounce Ball}
+{125#Arrow}
+{126#Squiggler}
+{127#Pumpkin}
+{128#Mummy Pokey}
+{129#Lakithunder}
+{130#Spinning Chain with Spike Ball}
+{131#Bowser boss}
+{132#Skeleton Bowser}
+{133#Unused Bowser boss}
+{134#Toadsworth}
+{135#Cheep Skipper}
+{136#Jumping Cheep Cheep}
+{137#Input Controller - "And" (If X AND Y, do Z)}
+{138#Input Controller - "Or" (If X OR Y, do Z)}
+{139#Random output controller (If X, do Y OR Z) [Buggy]}
+{140#ID Count Down Activator}
+{141#Zone Activation Switch}
+{142#ID Count Up activator}
+{143#Blooper}
+{144#Blooper Nanny}
+{145#Blooper, Mini-Blooper Spawn}
+{147#Spiny Beetle}
+{148#Crow}
+{149#Kab-omb}
+{150#Unused Spike bass}
+{151#Red Coin Ring}
+{152#Ghost House Pointing Hands}
+{153#Invisible Fireball}
+{154#Crow Generator}
+{155#Snowball Thrower}
+{157#Spike Bass}
+{158#Midway Point  Vertical}
+{159#Midway Point}
+{161#Vertical Moving Platform}
+{162#Horizontal Moving Platform}
+{163#Horizontal moving platform}
+{164#Unused spinning log}
+{165#Vertical Moving Stone Block}
+{166#Horizontal Moving Stone Block}
+{167#Horizontal moving stone block w/ spikes}
+{168#Moving stone block w/ spikes}
+{169#Hanging Metal Platform}
+{170#Falling rock platform}
+{171#See-saw platform}
+{172#Scale Platform}
+{173#Sinking Platform}
+{174#Moving Wood Platform on touch}
+{175#3-Platform Automatic Stationary Spinner}
+{177#Vertical Platform Generator}
+{179#Spinning Red Rectangle Platform}
+{180#Spinning Red Triangle Platform}
+{181#Spinning Square Platform}
+{182#Moving Wood Platform on Line}
+{183#Manual Moving Wheel}
+{184#Swinging Pole on Line}
+{185#Giant Spiked Ball}
+{186#Giant 4 Spinning Platforms}
+{187#Ground Pound Gate}
+{188#Bump from below Red Platform}
+{189#Tilting Mushroom}
+{190#Purple Tilt Mushroom}
+{191#Rising/Lowering Mushroom}
+{192#Rising Green Mushroom Platform}
+{193#Expand/Contract Mushroom}
+{194#Bouncing Mushroom}
+{195#Moving Mushroom}
+{196#Rope}
+{197#Vine}
+{198#Manual Control Platform}
+{199#Groundpound Ghost House Goo}
+{200#Sinking Snow}
+{201#Soft Cloud Platform}
+{202#Pipe cannon}
+{204#Swelling Tube}
+{206#Tile creator/destroyer}
+{207#Moving Sloped Ghost House Goo (16x3)}
+{208#Spinning Barrel}
+{209#Wall Jump Platform}
+{210#Rotating Carry-Through-Wall Platform}
+{211#Smashed pipe sprite}
+{212#Falling Snow From Tree}
+{213#1-Way Door}
+{214#Moving Green Blocks}
+{215#Ghost House Elevator }
+{216#Giant Falling Spike}
+{217#Giant Rising Spike}
+{218#Giant Left Shooting Spike}
+{219#Giant Right Shooting Spike}
+{220#Fast Giant Down Shooting Spike}
+{221#Fast Giant Up Shooting Spike}
+{222#Fast Giant Left Shooting Spike}
+{223#Fast Giant Right Shooting Spike}
+{224#Giant Wiggler}
+{225#Tornado}
+{226#Whirlpool}
+{227#Giant Pink Floating Log}
+{228#Pendulum Platform}
+{229#Nothing}
+{230#Draw Bridge Platform}
+{231#Swelling Ground}
+{232#Tight Rope}
+{233#Unused Bouncing Bricks}
+{234#Small flamethrower}
+{235#Flamethrower}
+{237#Springboard}
+{239#Mega Goomba}
+{240#Self-activating brick/block}
+{242#? Switch}
+{243#Brick Block with ? Switch}
+{244#P-Switch}
+{245#Brick With P-Switch}
+{246#Red ! Switch}
+{247#Brick with Red ! switch}
+{248#Bullet Bill Launcher}
+{249#Banzai Bill cannon}
+{250#Hanging Bouncing ? Block}
+{251#Unused Rotating Spiked ? Block}
+{252#Rotating Spiked ? Block}
+{253#Unused Rotating Spiked ? Block}
+{254#Spinning jump board}
+{255#Nothing?}
+{256#Nothing}
+{257#Roulette Block}
+{258#Hanging ? Block}
+{259#Jumping/Spinning ? Block}
+{260#Flying ? Block}
+{261#Red Flying ? Block}
+{262#Rotating Bullet Bill Cannon}
+{263#Event Activated Door}
+{264#Mushroom House Block}
+{265#Bowser Battle Switch}
+{266#Boss Battle Key Location}
+{268#Invisible coin brick}
+{269#Warp Zone Pipe Cannon}
+{270#Nothing}
+{271#Nothing}
+{272#0 Stick to bottom length activator left}
+{273#0 Stick to bottom length activator right}
+{274#In air vertical scroll stop left}
+{275#In air vertical scroll stop right}
+{276#Auto Scroll Start}
+{277#Scroll & Mario stop sideways}
+{278#Water}
+{279#Lava}
+{280#Junglekusa (Unused Jungle Image)}
+{281#Poison Water}
+{282#Horizontal camera offset}
+{283#Touching ground vertical scroll stop left }
+{284#Touching ground vertical scroll stop right}
+{285#Final Castle Create Loop}
+{286#Final Castle Wrong Path}
+{287#Fog FG effect}
+{288#Cloud FG effect}
+{289#Water FG effect 1}
+{290#Water FG effect 2}
+{291#Snow FG effect 1}
+{292#Snow FG effect 2}
+{293#Snow FG effect 3}
+{294#Fire FG effect 1}
+{295#Fire FG effect 2}
+{296#Fire FG effect 3}
+{297#Light FG effect 1}
+{298#Light FG effect 2}
+{299#Mystery Sprite 1?}
+{300#Mystery Sprite 2?}
+{301#Sea Weed}
+{325#Nothing}
