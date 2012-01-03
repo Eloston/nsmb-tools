@@ -18,12 +18,31 @@ def ovoffset(Region):
     elif Region == 'KOR':
         return 168162
 
+def region_detect(OVPath):
+    with open(OVPath, mode='rb') as Overlay:
+        Overlay.seek(28)
+        Byte = Overlay.read(1)
+        Overlay.close()
+        if Byte == b'\x84':
+            return 'USA'
+        elif Byte == b'\x64':
+            return 'EUR'
+        elif Byte == b'\x04':
+            return 'JAP'
+        elif Byte == b'\xC4':
+            return 'KOR'
+        else:
+            return 'UNK'
+
 def ClassIDread(OVPath, Sprite, Region):
     '''    
     Read the ClassID of a specific Sprite and return a decimal representation of it
     '''    
     if libmisc.Spritenumchk(Sprite) != 'UNK':
-        Overlay = open(OVPath, mode='rb')
+        try:        
+            Overlay = open(OVPath, mode='rb')
+        except IOError:
+            return 'Invalid Overlay Path'
         Overlay.seek(ovoffset(Region) + Sprite*2 - 2)
         Byte2 = binascii.hexlify(Overlay.read(1))
         Byte1 = binascii.hexlify(Overlay.read(1))
@@ -42,7 +61,10 @@ def ClassIDwrite(OVPath, Sprite, Region, ClassID):
         ClassID = hex(ClassID)[2:]
         ZeroAdd = (4 - len(ClassID))*'0'
         ClassID = ''.join([ZeroAdd, ClassID])
-        Overlay = open(OVPath, mode='r+b')
+        try:
+            Overlay = open(OVPath, mode='r+b')
+        except IOError:
+            return 'Invalid Overlay Path'
         Overlay = mmap.mmap(Overlay.fileno(), 0)
         Overlay.seek(ovoffset(Region) + Sprite*2 - 2)
         Overlay.write_byte(int(ClassID[2:], 16))
