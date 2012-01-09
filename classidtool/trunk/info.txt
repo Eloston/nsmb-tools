@@ -34,3 +34,20 @@ Korea: "KOR"
 Database file specs:
 
 {ClassID#Name}
+
+----------------------
+
+Get Overlay0 Offset:
+
+Go to 0x48
+
+Read Four bytes (including the one you're on)
+
+Go to the offset specified by those bytes
+
+Read those 4 bytes (including the one you're on)
+
+Go to that offset
+
+You're at the beginning of the Overlay 0!
+
