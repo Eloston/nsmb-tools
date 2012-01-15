@@ -1,20 +1,22 @@
 # ClassID Tool
-# Run ClassID Tool
+# Friendly interface to interface with the extracted Overlay0
 
 import ovproc
 import database
 import libmisc
 import libpatch
 
-def interface():
-    # Import and store Name Database
-    namedb = database.readdb('NameDatabase')
-    # Import and store Patch Original
-    patchoriginal = database.read_patch('PatchOriginal')
-    # Begin Interface
-    print('ClassID Tool external Overlay0 Interface')
-    overlay_path = input("Input the absolute or relative path to the extracted Overlay0: ")
-    print("---------------")
+def specifyoverlay():
+    while True:
+        overlay_path = input("Input the absolute or relative path to the extracted Overlay0: ")
+        print("---------------")
+        if libmisc.check_file(overlay_path) == "NOT_FILE":
+            print("Not a valid file. Try again")
+            print("---------------")
+        else:
+            return ROM_path
+
+def checkromregion():
     rom_region = ovproc.region_detect(overlay_path)
     if rom_region == 'UNK':
         print("The Overlay region could not be automatically detected. Specify it manually")    
@@ -35,6 +37,17 @@ def interface():
             print("And put KOR for the Korean version")
             rom_region = input("Put your version here: ")
             print("---------------")
+    return rom_region
+
+def interface():
+    # Import and store Name Database
+    namedb = database.readdb(libmisc.programfile_path('NameDatabase'))
+    # Import and store Patch Original
+    patchoriginal = database.read_patch(libmisc.programfile_path('PatchOriginal'))
+    # Begin Interface
+    print('ClassID Tool external Overlay0 Interface')
+    overlay_path = specifyoverlay()
+    rom_region = checkromregion()
     while True:
         print("Choose your option:")
         print("A) Read Class ID")
@@ -115,13 +128,9 @@ def interface():
                 input("Press [Enter] to continue")
                 print("---------------")
         elif menu_option.upper() == "D":
-            print("Do option F")
-            input("Press [Enter] to continue")
-            print("---------------")
+            rom_region = checkromregion()
         elif menu_option.upper() == "E":
-            print("Do option F")
-            input("Press [Enter] to continue")
-            print("---------------")
+            overlay_path = specifyoverlay()
         elif menu_option.upper() == "F":
             print("Not implemented yet. Do option G and run Class ID Tool again.")
             input("Press [Enter] to continue")
