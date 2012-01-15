@@ -1,0 +1,24 @@
+ClassID Tool
+
+Compiling
+
+
+What you need:
+cx_freeze for Python 3.2
+
+
+How to compile:
+(A) -> Where the binaries will output to
+
+cxfreeze run.py --target-dir (A)
+
+This command will work on any platform
+
+
+NOTES FOR WINDOWS:
+
+If Python 3.2 is not installed under C:\Python32, then you need to takes these steps to configure cx_freeze:
+
+1) Go to PYTHON32PATH\Scripts, and open cxfreeze.bat in a text editor. Change the paths in the script to the directory you're currently in.
+
+2) Add your current directory location to your PATH Environmental Variable if you want to use the command cxfreeze anywhere.

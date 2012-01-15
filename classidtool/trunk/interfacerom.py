@@ -7,15 +7,25 @@ import libmisc
 import libpatch
 import ovproc
 
+def specifyrom():
+    while True:
+        ROM_path = input("Input the absolute or relative path to the ROM: ")
+        print("---------------")
+        if libmisc.check_file(ROM_path) == "NOT_FILE":
+            print("Not a valid file. Try again")
+            print("---------------")
+        else:
+            return ROM_path
+
 def interface():
     # Import and store Name Database
-    namedb = database.readdb('NameDatabase')
+    namedb = database.readdb(libmisc.programfile_path('NameDatabase'))
     # Import and store Patch Original
-    patchoriginal = database.read_patch('PatchOriginal')
+    patchoriginal = database.read_patch(libmisc.programfile_path('PatchOriginal'))
     # Start interface
     print('ClassID Tool ROM interface')
-    ROM_path = input("Input the absolute or relative path to the ROM: ")
     print("---------------")
+    ROM_path = specifyrom()
     rom_region = librom.detect_region(ROM_path)
     if rom_region == 'UNK':
         print("The ROM region could not be automatically detected. Specify it manually")    
@@ -136,8 +146,7 @@ def interface():
                     rom_region = input("Put your version here: ")
                     print("---------------")
         elif menu_option.upper() == "F":
-            ROM_path = input("Input the absolute or relative path to the ROM: ")
-            print("---------------")
+            ROM_path = specifyrom()
         elif menu_option.upper() == "G":
             OVERLAY_OFFSET = librom.get_overlay_offset(ROM_path, ovproc.ovoffset(rom_region))
             print("Done. The offset is now", OVERLAY_OFFSET)

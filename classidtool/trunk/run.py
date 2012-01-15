@@ -23,7 +23,7 @@ def interfacechooser():
             print("Do you want to continue?")
             nsmbrom_warning_input = input("Type 'Yes' to continue, or hit [Enter] to cancel: ")
             print("---------------")
-            if nsmb_rom_warning_input == "Yes":            
+            if nsmbrom_warning_input == "Yes":            
                 interfacerom.interface()
             else:
                 print("Returning to main menu")
@@ -31,7 +31,7 @@ def interfacechooser():
         elif interfacechooser_choice.upper() == "B":
             interfaceoverlay.interface()
         elif interfacechooser_choice.upper() == "C":
-            quit()
+            exit()
         else:
             print("Invalid option")
             input("Press [Enter] to continue")

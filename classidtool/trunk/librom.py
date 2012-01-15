@@ -5,6 +5,7 @@ import binascii
 import libmisc
 import ovproc
 import mmap
+import os.path
 
 def detect_region(ROMPath):
     '''
