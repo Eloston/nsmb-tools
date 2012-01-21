@@ -279,7 +279,7 @@ class ClassIDEditingTab(QtGui.QWidget):
         choice, ok = QtGui.QInputDialog.getInteger(self, "Change ClassID", ' '.join(["Change ClassID of Sprite", str(currentSprite), "to:"]), 0, 1, 65536, 1)
         if ok == True:
             File_Interface.ClassIDWrite(currentSprite, choice)
-            ClassIDTableName = File_Interface.NameLookup(File_Interface.ClassIDRead(iterate))
+            ClassIDTableName = File_Interface.NameLookup(File_Interface.ClassIDRead(choice))
             if ClassIDTableName.upper() == 'INVVALUE':
                 ClassIDTableName = QtGui.QTableWidgetItem("(Untitled)")
             else:
