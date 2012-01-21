@@ -5,15 +5,22 @@ Compiling
 
 What you need:
 cx_freeze for Python 3.2
+Python 3.2
+PyQT 4.2 or greater for Python 3.2 (GUI only)
 
 
 How to compile:
 (A) -> Where the binaries will output to
 
-cxfreeze run.py --target-dir (A)
+Text-Interface:
+cxfreeze txtinterface.py --target-dir (A)
+
+GUI:
+cxfreeze guiinterface.py --target-dir (A)
 
 This command will work on any platform
 
+For now, you will have to create separate binaries for the different interfaces (One for GUI and one for Text-Interface)
 
 NOTES FOR WINDOWS:
 

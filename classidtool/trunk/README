@@ -13,7 +13,11 @@ Overlay0 or NSMB ROM
 
 How to run the tool:
 
-Double-click on run.py, or run 'python run.py'
+Text-Interface
+Double-click on txtinterface.py, or run 'python3 txtinterface.py'
+
+GUI
+Double-click on guiinterface.py, or run 'python3 guiinterface.py'
 
 Notes:
 
