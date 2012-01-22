@@ -16,10 +16,10 @@ def detect_region(ROMPath):
     except IOError:
         return 'Invalid ROM Path'
     ROM.seek(12)
-    Char1 = hex(int(ROM.read(1), 16))[2:]
-    Char2 = hex(int(ROM.read(1), 16))[2:]
-    Char3 = hex(int(ROM.read(1), 16))[2:]
-    Char4 = hex(int(ROM.read(1), 16))[2:]
+    Char1 = str(ROM.read(1))[2:][:1]
+    Char2 = str(ROM.read(1))[2:][:1]
+    Char3 = str(ROM.read(1))[2:][:1]
+    Char4 = str(ROM.read(1))[2:][:1]
     ROM.close()
     Gamecode = ''.join([Char1, Char2, Char3, Char4])
     if Gamecode.upper() == 'A2DE':

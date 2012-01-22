@@ -17,7 +17,7 @@ def ClassIDcheck(ClassID):
     '''
     Check to make sure the ClassID value is valid
     '''
-    if 0 <= ClassID <= 65536:
+    if 0 <= ClassID <= 65535:
         return ClassID
     else:
         return 'UNK'

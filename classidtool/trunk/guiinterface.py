@@ -136,7 +136,7 @@ class interface(QtGui.QMainWindow):
             QtGui.QMessageBox.information(self, "Patch Exporting result", ' '.join(["The patch", NewPatch, "has been created sucessfully."]))
 
     def lookupname(self):
-        choice, ok = QtGui.QInputDialog.getInteger(self, "Lookup ClassID Name", "Specify a ClassID to lookup the name of in the Name Database:", 0, 1, 65536, 1)
+        choice, ok = QtGui.QInputDialog.getInteger(self, "Lookup ClassID Name", "Specify a ClassID to lookup the name of in the Name Database:", 0, 1, 65535, 1)
         if ok == True:
             Name = File_Interface.NameLookup(choice)
             if Name.upper() == "INVVALUE":
@@ -276,10 +276,10 @@ class ClassIDEditingTab(QtGui.QWidget):
 
     def editclassid(self):
         currentSprite = self.classidTable.currentRow() + 1
-        choice, ok = QtGui.QInputDialog.getInteger(self, "Change ClassID", ' '.join(["Change ClassID of Sprite", str(currentSprite), "to:"]), 0, 1, 65536, 1)
+        choice, ok = QtGui.QInputDialog.getInteger(self, "Change ClassID", ' '.join(["Change ClassID of Sprite", str(currentSprite), "to:"]), 0, 1, 65535, 1)
         if ok == True:
             File_Interface.ClassIDWrite(currentSprite, choice)
-            ClassIDTableName = File_Interface.NameLookup(File_Interface.ClassIDRead(choice))
+            ClassIDTableName = File_Interface.NameLookup(choice)
             if ClassIDTableName.upper() == 'INVVALUE':
                 ClassIDTableName = QtGui.QTableWidgetItem("(Untitled)")
             else:
