@@ -1,0 +1,21 @@
+NSMBe Spritedata Updater
+
+by nsmbhacking
+
+--------------------------
+
+This simple tool will download a new spritedata.txt for NSMBe.
+
+--------------------------
+
+What you need to run:
+Python 3
+PyQt 4
+
+What you need to build:
+cx_freeze
+
+How to build:
+cxfreeze Path_To_SpriteDataUpdater.py --target-dir Directory_Containing_Build
+
+This tool will work on any OS.
