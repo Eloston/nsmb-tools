@@ -53,6 +53,7 @@ class interface(QtGui.QWidget):
         try:
             FILE = open(os.path.join(DownloadLocation, "spritedata.txt"), mode="wb")
         except:
+            RequestSpritedata.close()
             QtGui.QMessageBox.critical(self, "Error while downloading", "Unable to create file!\nCould be caused by an invalid path, or access permissions.", "OK")
             return None
             
