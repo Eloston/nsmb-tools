@@ -205,6 +205,9 @@ class FileInfoTab(QtGui.QWidget):
         self.Text_ROM_OverlayOffset = QtGui.QLineEdit()
         self.Text_ROM_OverlayOffset.setReadOnly(True)
 
+        self.bottomFiller = QtGui.QWidget()
+        self.bottomFiller.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+
         self.clear_info()
 
         layout = QtGui.QGridLayout()
@@ -216,7 +219,11 @@ class FileInfoTab(QtGui.QWidget):
         layout.addWidget(self.Text_File_Path, 2, 1)
         layout.addWidget(Name_Text_ROM_OverlayOffset, 3, 0)
         layout.addWidget(self.Text_ROM_OverlayOffset, 3, 1)
-        self.setLayout(layout)  
+
+        layoutfiller = QtGui.QVBoxLayout()
+        layoutfiller.addLayout(layout)
+        layoutfiller.addWidget(self.bottomFiller)
+        self.setLayout(layoutfiller)
 
     def clear_info(self):
         self.Text_File_Path.setText("N/A")
