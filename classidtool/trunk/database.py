@@ -13,7 +13,8 @@ def readdb(NameDB):
     with open(NameDB, mode='r') as Database:
         for line in Database:
             m = regexp.match(line)
-            db[int(m.group('ClassID'))] = m.group('Name')
+            if not m == None:
+                db[int(m.group('ClassID'))] = m.group('Name')
 
     return db
 
@@ -35,7 +36,8 @@ def read_patch(PatchDB):
     with open(PatchDB, mode='r') as Database:
         for line in Database:
             m = regexp.match(line)
-            db[int(m.group('Sprite'))] = int(m.group('ClassID'))
+            if not m == None:
+                db[int(m.group('Sprite'))] = int(m.group('ClassID'))
 
     return db
 
