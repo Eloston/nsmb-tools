@@ -78,7 +78,7 @@ class interface(QtGui.QMainWindow):
         global filePath
         global ReadOnly
         ReadOnly = False
-        filePath = QtGui.QFileDialog.getOpenFileName(self, "Open Overlay0 or NDS ROM", '', "All/Overlay0 Files (*);;NDS ROM (*.nds)")
+        filePath = QtGui.QFileDialog.getOpenFileName(self, "Open Overlay0 or NDS ROM", '', "NDS ROM (*.nds);;All/Overlay0 Files (*)")
         if filePath == '':
             return None
         try:
