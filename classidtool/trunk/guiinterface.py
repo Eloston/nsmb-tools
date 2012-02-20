@@ -8,6 +8,9 @@ import ovproc
 import libpatch
 import libmisc
 import database
+import liburllist
+import os.path
+import libupdate
 
 class interface(QtGui.QMainWindow):
     def __init__(self):
@@ -21,6 +24,9 @@ class interface(QtGui.QMainWindow):
         self.tabs.addTab(self.classIDEditingTab, "ClassID Editing")
         self.setCentralWidget(self.tabs)
 
+        statusbarwelcome = "Welcome to ClassID Tool!"
+        self.statusBar().showMessage(statusbarwelcome)
+
         # Define submenus and linking functions
         self.openAct = QtGui.QAction("&Open", self, statusTip="Open a NDS ROM or Overlay0", triggered=self.openfile)
         self.closeAct = QtGui.QAction("&Close", self, statusTip="Close the opened NDS ROM or Overlay0", triggered=self.closefile)        
@@ -31,6 +37,10 @@ class interface(QtGui.QMainWindow):
 
         self.lookupnameAct = QtGui.QAction("&Lookup ClassID Name", self, statusTip="Lookup the name of a ClassID", triggered=self.lookupname)
         self.resetClassIDAct = QtGui.QAction("&Reset ClassID values", self, statusTip="Restore the original ClassID values", triggered=self.resetClassID)
+
+        self.updateNameDBAct = QtGui.QAction("&NameDatabase", self, statusTip="Update the NameDatabase file", triggered=self.updateNameDB)
+
+        self.setascending_extraAct = QtGui.QAction("&Ascending values 1:1 mapping", self, statusTip="Sprite # = ClassID!", triggered=self.setascending_extra)
 
         self.helpAct = QtGui.QAction("&About ClassID Tool", self, statusTip="View information about ClassID Tool", triggered=self.abouttool)
 
@@ -48,6 +58,13 @@ class interface(QtGui.QMainWindow):
         self.toolMenu = self.menuBar().addMenu("&Tools")
         self.toolMenu.addAction(self.lookupnameAct)
         self.toolMenu.addAction(self.resetClassIDAct)
+        self.toolMenu.addSeparator()
+
+        self.updateMenu = self.toolMenu.addMenu("&Update")
+        self.updateMenu.addAction(self.updateNameDBAct)
+
+        self.extrasMenu = self.toolMenu.addMenu("&Extras")
+        self.extrasMenu.addAction(self.setascending_extraAct)
 
         self.helpMenu = self.menuBar().addMenu("&Help")
         self.helpMenu.addAction(self.helpAct)
@@ -56,15 +73,27 @@ class interface(QtGui.QMainWindow):
 
         self.closefile()
 
-        global NameDB
-        global PatchOrig
-        NameDB = database.readdb(libmisc.programfile_path("NameDatabase"))
-        PatchOrig = database.read_patch(libmisc.programfile_path("PatchOriginal"))
-
     # Define menu action
     def openfile(self):
         global filePath
+        global ReadOnly
+        ReadOnly = False
         filePath = QtGui.QFileDialog.getOpenFileName(self, "Open Overlay0 or NDS ROM", '', "All/Overlay0 Files (*);;NDS ROM (*.nds)")
+        if filePath == '':
+            return None
+        try:
+            # Best way to check if file exists and is readable at the same time
+            os.path.getsize(filePath)
+        except:
+            QtGui.QMessageBox.critical(self, "Error while opening", "The file you have specified could not be read.\nThis may be caused because you don't have reading rights, or another reason.", "OK")
+            return None
+        try:
+            # Is file writeable?
+            readonlytest = open(filePath, mode='r+b')
+            readonlytest.close()
+        except:
+            QtGui.QMessageBox.information(self, "File detected as read-only", "The file you have selected has been detected and will be opened in read-only mode.")
+            ReadOnly = True
         filetypeanswer = QtGui.QMessageBox.question(self, "NDS ROM or Overlay0?", "What kind of file is this?\nIf it is an Overlay0, then select the Overlay0 button.\nIf it is a NDS ROM, select the NDS ROM button.", "Cancel", "Overlay0", "NDS ROM")
         global fileType
         if filetypeanswer == 1:
@@ -72,10 +101,11 @@ class interface(QtGui.QMainWindow):
             self.detectregion()
             self.openAct.setEnabled(False)
             self.closeAct.setEnabled(True)
-            self.importPatchAct.setEnabled(True)
-            self.exportPatchAct.setEnabled(True)
-            self.lookupnameAct.setEnabled(True)
-            self.resetClassIDAct.setEnabled(True)
+            if not ReadOnly:
+                self.importPatchAct.setEnabled(True)
+                self.exportPatchAct.setEnabled(True)
+                self.resetClassIDAct.setEnabled(True)
+                self.extrasMenu.setEnabled(True)
             FileInfoTab.load_info(self.fileInfoTab)
             ClassIDEditingTab.load_file(self.classIDEditingTab)
         elif filetypeanswer == 2:
@@ -85,10 +115,11 @@ class interface(QtGui.QMainWindow):
                 self.detectregion()
                 self.openAct.setEnabled(False)
                 self.closeAct.setEnabled(True)
-                self.importPatchAct.setEnabled(True)
-                self.exportPatchAct.setEnabled(True)
-                self.lookupnameAct.setEnabled(True)
-                self.resetClassIDAct.setEnabled(True)
+                if not ReadOnly:                
+                    self.importPatchAct.setEnabled(True)
+                    self.exportPatchAct.setEnabled(True)
+                    self.resetClassIDAct.setEnabled(True)
+                    self.extrasMenu.setEnabled(True)
                 global ROMOvOffset
                 ROMOvOffset = librom.get_overlay_offset(filePath, ovproc.ovoffset(fileRegion))
                 ClassIDEditingTab.load_file(self.classIDEditingTab)
@@ -99,8 +130,8 @@ class interface(QtGui.QMainWindow):
         self.closeAct.setEnabled(False)
         self.importPatchAct.setEnabled(False)
         self.exportPatchAct.setEnabled(False)
-        self.lookupnameAct.setEnabled(False)
         self.resetClassIDAct.setEnabled(False)
+        self.extrasMenu.setEnabled(False)
         global filePath
         global fileType
         global fileRegion
@@ -136,12 +167,8 @@ class interface(QtGui.QMainWindow):
             QtGui.QMessageBox.information(self, "Patch Exporting result", ' '.join(["The patch", NewPatch, "has been created sucessfully."]))
 
     def lookupname(self):
-        choice, ok = QtGui.QInputDialog.getInteger(self, "Lookup ClassID Name", "Specify a ClassID to lookup the name of in the Name Database:", 0, 1, 65535, 1)
-        if ok == True:
-            Name = File_Interface.NameLookup(choice)
-            if Name.upper() == "INVVALUE":
-                Name = "not in the Name Database"
-            QtGui.QMessageBox.information(self, "ClassID Name Lookup result", ' '.join(["The name of ClassID", str(choice), "is", Name]))
+        self.LookupNameDialog = NameDBTable()
+        NameDBTable.LookupClassID(self.LookupNameDialog)
 
     def abouttool(self):
         QtGui.QMessageBox.about(self, "About ClassID Tool","ClassID Tool\n    By nsmbhacking\nClassID Tool is a tool to modify, read, and lookup names for Class IDs from a NSMB ROM or an extracted Overlay0 from a NSMB ROM.")
@@ -168,6 +195,47 @@ class interface(QtGui.QMainWindow):
         if fileRegion == 'UNK':
             self.chooseregion()
 
+    def updateNameDB(self):
+        try:
+            testreadonly = open(libmisc.programfile_path("NameDatabase"), mode='r+b')
+            testreadonly.close()
+        except:
+            QtGui.QMessageBox.critical(self, "Error while updating", "The NameDatabase cannot be edited.\nMake sure you can edit NameDatabase before updating.", "OK")
+            return None
+        global URLList
+        Result = libupdate.NameDatabase(libmisc.programfile_path("NameDatabase"), URLList)
+        if Result == "NSMBHD_FAILED":
+            QtGui.QMessageBox.critical(self, "Error while updating", "Failed to download updates from NSMBHD", "OK")
+        elif Result == "Unused_FAILED":
+            QtGui.QMessageBox.critical(self, "Error while updating", "Failed to download unused ClassID info", "OK")
+        elif Result == "Open_FAILED":
+            QtGui.QMessageBox.critical(self, "Error while updating", "The NameDatabase cannot be edited.\nMake sure you can edit NameDatabase before updating.", "OK")
+        elif Result == "Sucess":
+            global NameDB
+            global fileType
+            NameDB = database.readdb(libmisc.programfile_path("NameDatabase"))
+            if not fileType == None:
+                self.classIDEditingTab.close_file()
+                self.classIDEditingTab.load_file()
+            QtGui.QMessageBox.information(self, "Updating results", "The NameDB has updated sucessfully", "OK")
+
+    def setascending_extra(self):
+        '''
+        Set all sprite values and ClassIDs to a 1:1 mapping (sprite 1 -> classid 1, sprite 2 -> classid 2, etc)
+        Just for fun and convenience
+        Kinda hackish
+        '''
+        NewPatch = dict()
+        iterate = 1
+        while iterate <= 325:
+            NewPatch[iterate] = iterate
+            iterate = iterate + 1
+        File_Interface.ImportPatch(NewPatch)
+        ClassIDEditingTab.close_file(self.classIDEditingTab)
+        ClassIDEditingTab.load_file(self.classIDEditingTab)
+        QtGui.QMessageBox.information(self, "Operation finished", "All Sprites have been set to a ClassID by a 1:1 mapping.")
+        
+
     @staticmethod
     def convert_region(INPUT):
         if INPUT == "USA":
@@ -187,26 +255,141 @@ class interface(QtGui.QMainWindow):
         elif INPUT == "Korean":
             return "KOR"
 
+class NameDBTable(QtGui.QDialog):
+    def __init__(self, parent=None):
+        super(NameDBTable, self).__init__(parent)
+
+        self.classnametable = QtGui.QTableWidget(0, 2)
+
+        self.classnametable.setHorizontalHeaderLabels(("ClassID", "ClassID Name"))
+        self.classnametable.horizontalHeader().setResizeMode(1, QtGui.QHeaderView.Stretch)
+        self.classnametable.verticalHeader().hide()
+        self.classnametable.setShowGrid(True)
+        self.classnametable.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
+
+        TopLabel = QtGui.QLabel("Below is a list of known ClassIDs and their names")
+
+        self.Layout = QtGui.QVBoxLayout()
+        self.Layout.addWidget(TopLabel)
+
+    def LookupClassID(self):
+        self.setWindowTitle("ClassID Tool - Lookup ClassID Names")
+
+        self.closebutton = QtGui.QPushButton("Close")
+        self.closebutton.clicked.connect(self.close)
+
+        buttonFiller = QtGui.QWidget()
+        buttonFiller.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
+
+        buttonLayout = QtGui.QHBoxLayout()
+        buttonLayout.addWidget(buttonFiller)
+        buttonLayout.addWidget(self.closebutton)
+
+        self.Layout.addWidget(self.classnametable)
+        self.Layout.addLayout(buttonLayout)
+        self.setLayout(self.Layout)
+
+        self.UpdateTable()
+        self.show()
+
+    def ChangeClassID(self, currentSprite):
+        self.setWindowTitle("ClassID Tool - Change ClassID Value")
+
+        self.currentSprite = currentSprite
+
+        self.classnametable.cellActivated.connect(self.ChangeClassID_setlinevalue)
+
+        self.SelectedValue = None
+
+        self.okbutton = QtGui.QPushButton("OK")
+        self.okbutton.clicked.connect(self.ChangeClassID_finished)
+
+        self.closebutton = QtGui.QPushButton("Cancel")
+        self.closebutton.clicked.connect(self.close)
+
+        self.SelectedClassIDBox = QtGui.QSpinBox()
+        self.SelectedClassIDBox.setRange(0, 65535)
+        self.SelectedClassIDBox.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
+
+        Name_SelectedClassIDBox = QtGui.QLabel(''.join(["Choose a ClassID for Sprite ", str(self.currentSprite), ":"]))
+
+        buttonFiller = QtGui.QWidget()
+        buttonFiller.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
+
+        valueboxLayout = QtGui.QHBoxLayout()
+        valueboxLayout.addWidget(Name_SelectedClassIDBox)
+        valueboxLayout.addWidget(self.SelectedClassIDBox)
+
+        buttonLayout = QtGui.QHBoxLayout()
+        buttonLayout.addWidget(buttonFiller)
+        buttonLayout.addWidget(self.okbutton)
+        buttonLayout.addWidget(self.closebutton)
+
+        InformationLabel = QtGui.QLabel("Double-Click an entry above to automatically set the spinbox to that ClassID")
+
+        self.Layout.addWidget(self.classnametable)
+        self.Layout.addWidget(InformationLabel)
+        self.Layout.addLayout(valueboxLayout)
+        self.Layout.addLayout(buttonLayout)
+        self.setLayout(self.Layout)
+
+        self.UpdateTable()
+        self.show()
+
+    def ChangeClassID_finished(self):
+        self.SelectedValue = self.SelectedClassIDBox.value()
+        Interface.classIDEditingTab.editclassid_checkchange(self.SelectedValue, self.currentSprite)
+        self.close()
+
+    def ChangeClassID_setlinevalue(self):
+        currentRow = self.classnametable.currentRow()
+        currentClassID = self.classnametable.item(currentRow, 0).text()
+        self.SelectedClassIDBox.setValue(int(currentClassID))
+
+    def UpdateTable(self):
+        self.classnametable.clearContents()
+        self.classnametable.setRowCount(0)
+        global NameDB
+        iterate = 0
+        for IDVALUE in list(NameDB.keys()):
+            ClassIDTableValue = QtGui.QTableWidgetItem(str(IDVALUE))
+            ClassIDTableValue.setFlags(ClassIDTableValue.flags() ^ QtCore.Qt.ItemIsEditable)
+            ClassIDTableName = QtGui.QTableWidgetItem(NameDB[IDVALUE])
+            ClassIDTableName.setFlags(ClassIDTableName.flags() ^ QtCore.Qt.ItemIsEditable)
+
+            self.classnametable.insertRow(iterate)
+            self.classnametable.setItem(iterate, 0, ClassIDTableValue)
+            self.classnametable.setItem(iterate, 1, ClassIDTableName)
+            iterate = iterate + 1
+
 class FileInfoTab(QtGui.QWidget):
     def __init__(self, parent=None):
         super(FileInfoTab, self).__init__(parent)
 
         Name_Label_File_Type = QtGui.QLabel("Type: ")
+        Name_Label_File_Type.setToolTip("The type of file currently open")
         self.Label_File_Type = QtGui.QLabel("N/A")
         
         Name_Label_ROM_Region = QtGui.QLabel("Region: ")
+        Name_Label_ROM_Region.setToolTip("This is the region of the opened file. Different regions are opened differently")
         self.Label_ROM_Region = QtGui.QLabel("N/A")
         
         Name_Text_File_Path = QtGui.QLabel("File Path: ")
+        Name_Text_File_Path.setToolTip("The absolute path to the opened file")
         self.Text_File_Path = QtGui.QLineEdit()
         self.Text_File_Path.setReadOnly(True)
 
         Name_Text_ROM_OverlayOffset = QtGui.QLabel("ROM Overlay0 Offset: ")
+        Name_Text_ROM_OverlayOffset.setToolTip("The decimal representation of the offset to Sprite 1 in the ROM.\nThis will only show a number when a ROM is open.")
         self.Text_ROM_OverlayOffset = QtGui.QLineEdit()
         self.Text_ROM_OverlayOffset.setReadOnly(True)
 
-        self.bottomFiller = QtGui.QWidget()
-        self.bottomFiller.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        Name_ReadOnly_State = QtGui.QLabel("File opened in read-only mode: ")
+        Name_ReadOnly_State.setToolTip("Tells whether the file is opened in read-only mode")
+        self.ReadOnly_State = QtGui.QLabel("N/A")
+
+        bottomFiller = QtGui.QWidget()
+        bottomFiller.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
 
         self.clear_info()
 
@@ -219,10 +402,12 @@ class FileInfoTab(QtGui.QWidget):
         layout.addWidget(self.Text_File_Path, 2, 1)
         layout.addWidget(Name_Text_ROM_OverlayOffset, 3, 0)
         layout.addWidget(self.Text_ROM_OverlayOffset, 3, 1)
+        layout.addWidget(Name_ReadOnly_State, 4, 0)
+        layout.addWidget(self.ReadOnly_State, 4, 1)
 
         layoutfiller = QtGui.QVBoxLayout()
         layoutfiller.addLayout(layout)
-        layoutfiller.addWidget(self.bottomFiller)
+        layoutfiller.addWidget(bottomFiller)
         self.setLayout(layoutfiller)
 
     def clear_info(self):
@@ -231,15 +416,21 @@ class FileInfoTab(QtGui.QWidget):
         self.Label_ROM_Region.setText("N/A")
         self.Text_File_Path.setText("N/A")
         self.Label_File_Type.setText("N/A")
+        self.ReadOnly_State.setText("N/A")
 
     def load_info(self):
         global fileType
         global filePath
         global fileRegion
         global Interface
+        global ReadOnly
         self.Label_File_Type.setText(fileType)
         self.Label_ROM_Region.setText(interface.convert_region(fileRegion))
         self.Text_File_Path.setText(filePath)
+        if ReadOnly:
+            self.ReadOnly_State.setText("Yes")
+        else:
+            self.ReadOnly_State.setText("No")
         if fileType == "NDS ROM":
             global ROMOvOffset
             self.Text_ROM_OverlayOffset.setText(str(ROMOvOffset))
@@ -250,14 +441,17 @@ class ClassIDEditingTab(QtGui.QWidget):
 
         self.classidTable = QtGui.QTableWidget(0, 2)
 
-        self.classidTable.setHorizontalHeaderLabels(("ClassID Name", "ClassID #"))
+        self.classidTable.setHorizontalHeaderLabels(("ClassID Name", "ClassID"))
         self.classidTable.horizontalHeader().setResizeMode(0, QtGui.QHeaderView.Stretch)
         self.classidTable.setShowGrid(True)
         self.classidTable.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
         self.classidTable.cellActivated.connect(self.editclassid)
+
+        InstructionLabel = QtGui.QLabel("Double-click an entry to edit the ClassID of that Sprite")
         
-        self.Layout = QtGui.QGridLayout()
-        self.Layout.addWidget(self.classidTable, 0, 0)
+        self.Layout = QtGui.QVBoxLayout()
+        self.Layout.addWidget(InstructionLabel)
+        self.Layout.addWidget(self.classidTable)
         self.setLayout(self.Layout)
 
     def close_file(self):
@@ -282,9 +476,17 @@ class ClassIDEditingTab(QtGui.QWidget):
             iterate = iterate + 1
 
     def editclassid(self):
-        currentSprite = self.classidTable.currentRow() + 1
-        choice, ok = QtGui.QInputDialog.getInteger(self, "Change ClassID", ' '.join(["Change ClassID of Sprite", str(currentSprite), "to:"]), 0, 1, 65535, 1)
-        if ok == True:
+        global ReadOnly
+        if not ReadOnly:
+            currentSprite = self.classidTable.currentRow() + 1
+            self.EditClassIDDialog = NameDBTable()
+            NameDBTable.ChangeClassID(self.EditClassIDDialog, currentSprite)
+
+        else:
+            QtGui.QMessageBox.critical(self, "Error while editing", "This file is in read-only mode.", "OK")
+
+    def editclassid_checkchange(self, choice, currentSprite):
+        if not choice == None:
             File_Interface.ClassIDWrite(currentSprite, choice)
             ClassIDTableName = File_Interface.NameLookup(choice)
             if ClassIDTableName.upper() == 'INVVALUE':
@@ -359,19 +561,111 @@ class File_Interface():
         global NameDB
         return database.lookup(NameDB, ParamA)
 
+class Missingfilesdialog(QtGui.QWidget):
+    def __init__(self):
+        super(Missingfilesdialog, self).__init__()
+
+        global Missingfiles
+
+        self.ErrorMessage = QtGui.QLabel("ClassID Tool is unable to load without the following file(s):")
+        self.MissingList = QtGui.QTextEdit()
+        self.MissingList.setPlainText(Missingfiles)
+        self.MissingList.setReadOnly(True)
+        self.ErrorMessageBottom = QtGui.QLabel("Close this and make the file(s) avaliable to load.")
+        self.closebutton = QtGui.QPushButton("Close")
+        self.closebutton.clicked.connect(self.close)
+
+        buttonFiller = QtGui.QWidget()
+        buttonFiller.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
+
+        buttonLayout = QtGui.QHBoxLayout()
+        buttonLayout.addWidget(buttonFiller)
+        buttonLayout.addWidget(self.closebutton)
+
+        self.Layout = QtGui.QVBoxLayout()
+        self.Layout.addWidget(self.ErrorMessage)
+        self.Layout.addWidget(self.MissingList)
+        self.Layout.addWidget(self.ErrorMessageBottom)
+        self.Layout.addLayout(buttonLayout)
+
+        self.setLayout(self.Layout)
+
+        self.setWindowTitle("ClassID Tool - Error")
+
+class GeneralExceptiondialog(QtGui.QDialog):
+    def __init__(self, *args):
+        super(GeneralExceptiondialog, self).__init__()
+
+        import traceback
+        ExceptionDetails = ''.join(traceback.format_exception(*args))
+
+        self.ErrorMessage = QtGui.QLabel("ClassID Tool has encountered an error. The details are below:")
+        self.MissingList = QtGui.QTextEdit()
+        self.MissingList.setPlainText(ExceptionDetails)
+        self.MissingList.setReadOnly(True)
+        self.ErrorMessageBottom = QtGui.QLabel("If you want to report this error, please submit these details to ELMario.")
+        self.closebutton = QtGui.QPushButton("Close")
+        self.closebutton.clicked.connect(self.close)
+
+        buttonFiller = QtGui.QWidget()
+        buttonFiller.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
+
+        buttonLayout = QtGui.QHBoxLayout()
+        buttonLayout.addWidget(buttonFiller)
+        buttonLayout.addWidget(self.closebutton)
+
+        self.Layout = QtGui.QVBoxLayout()
+        self.Layout.addWidget(self.ErrorMessage)
+        self.Layout.addWidget(self.MissingList)
+        self.Layout.addWidget(self.ErrorMessageBottom)
+        self.Layout.addLayout(buttonLayout)
+
+        self.setLayout(self.Layout)
+
+        self.setWindowTitle("ClassID Tool - Error")
+
+def exceptionhookstart(*args):
+    global ExceptionDialog
+    QtGui.qApp.closeAllWindows()
+    ExceptionDialog = GeneralExceptiondialog(*args)
+    ExceptionDialog.show()
+
 filePath = None
 fileType = None
 fileRegion = None
 ROMOvOffset = None
 NameDB = None
 PatchOrig = None
+URLList = None
+ReadOnly = None
+
+ExceptionDialog = None
 
 if __name__ == '__main__':
     import sys
 
+    sys.excepthook = exceptionhookstart
+
     app = QtGui.QApplication(sys.argv)
 
-    Interface = interface()
-    Interface.show()
+    Missingfiles = ''
+    try:
+        NameDB = database.readdb(libmisc.programfile_path("NameDatabase"))
+    except:
+        Missingfiles = Missingfiles + 'NameDatabase\n'
+    try:
+        PatchOrig = database.read_patch(libmisc.programfile_path("PatchOriginal"))
+    except:
+        Missingfiles = Missingfiles + 'PatchOriginal\n'
+    try:
+        URLList = liburllist.importlist(libmisc.programfile_path("URL_List.txt"))
+    except:
+        Missingfiles = Missingfiles + 'URL_List.txt\n'
+    if len(Missingfiles) == 0:
+            Interface = interface()
+            Interface.show()
+    else:
+        missingfilesdialog = Missingfilesdialog()
+        missingfilesdialog.show()
 
     sys.exit(app.exec_())
