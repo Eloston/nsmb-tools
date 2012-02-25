@@ -7,6 +7,20 @@ import ovproc
 import mmap
 import os.path
 
+def check_header(ROMPath):
+    '''
+    Checks to see if the file is a NSMB ROM.
+    If it is, then it will return True. Otherwise False
+    '''
+    HEADER = b'NEW MARIO'
+    FILE =  open(ROMPath, mode='rb')
+    BYTES = FILE.read(9)
+    FILE.close()
+    if BYTES == HEADER:
+        return True
+    else:
+        return False
+
 def detect_region(ROMPath):
     '''
     Return game region using the ROM header

@@ -5,6 +5,20 @@ import binascii
 import mmap
 import libmisc
 
+def check_header(OVPath):
+    '''
+    Check the header of the Overlay to see if it's valid.
+    Returns True if header is valid, otherwise returns False
+    '''
+    HEADER = b'10402de9'
+    FILE = open(OVPath, mode='rb')
+    BYTES = binascii.hexlify(FILE.read(4))
+    FILE.close()
+    if BYTES == HEADER:
+        return True
+    else:
+        return False
+
 def ovoffset(Region):
     '''
     Returns the decimal offset for Sprite 1's ClassID

@@ -16,6 +16,8 @@ class interface(QtGui.QMainWindow):
     def __init__(self):
         super(interface, self).__init__()
 
+        global ToolName
+
         self.fileInfoTab = FileInfoTab()
         self.classIDEditingTab = ClassIDEditingTab()
 
@@ -24,16 +26,16 @@ class interface(QtGui.QMainWindow):
         self.tabs.addTab(self.classIDEditingTab, "ClassID Editing")
         self.setCentralWidget(self.tabs)
 
-        statusbarwelcome = "Welcome to ClassID Tool!"
+        statusbarwelcome = ''.join(["Welcome to ", ToolName])
         self.statusBar().showMessage(statusbarwelcome)
 
         # Define submenus and linking functions
         self.openAct = QtGui.QAction("&Open", self, statusTip="Open a NDS ROM or Overlay0", triggered=self.openfile)
         self.closeAct = QtGui.QAction("&Close", self, statusTip="Close the opened NDS ROM or Overlay0", triggered=self.closefile)        
-        self.exitAct = QtGui.QAction("&Exit", self, statusTip="Exit ClassID Tool", triggered=self.close)
+        self.exitAct = QtGui.QAction("&Exit", self, statusTip=''.join(["Exit ", ToolName]), triggered=self.close)
 
-        self.importPatchAct = QtGui.QAction("&Import Patch...", self, statusTip="Import a ClassID Tool patch", triggered=self.importPatch)
-        self.exportPatchAct = QtGui.QAction("&Export Patch...", self, statusTip="Export a ClassID Tool patch", triggered=self.exportPatch)
+        self.importPatchAct = QtGui.QAction("&Import Patch...", self, statusTip="Import a patch", triggered=self.importPatch)
+        self.exportPatchAct = QtGui.QAction("&Export Patch...", self, statusTip="Export a patch", triggered=self.exportPatch)
 
         self.lookupnameAct = QtGui.QAction("&Lookup ClassID Name", self, statusTip="Lookup the name of a ClassID", triggered=self.lookupname)
         self.resetClassIDAct = QtGui.QAction("&Reset ClassID values", self, statusTip="Restore the original ClassID values", triggered=self.resetClassID)
@@ -42,7 +44,7 @@ class interface(QtGui.QMainWindow):
 
         self.setascending_extraAct = QtGui.QAction("&Ascending values 1:1 mapping", self, statusTip="Sprite # = ClassID!", triggered=self.setascending_extra)
 
-        self.helpAct = QtGui.QAction("&About ClassID Tool", self, statusTip="View information about ClassID Tool", triggered=self.abouttool)
+        self.helpAct = QtGui.QAction(''.join(["&About ", ToolName]), self, statusTip=''.join(["View information about ", ToolName]), triggered=self.abouttool)
 
         # Define Menus
         self.fileMenu = self.menuBar().addMenu("&File")
@@ -69,7 +71,7 @@ class interface(QtGui.QMainWindow):
         self.helpMenu = self.menuBar().addMenu("&Help")
         self.helpMenu.addAction(self.helpAct)
 
-        self.setWindowTitle("ClassID Tool")
+        self.setWindowTitle(ToolName)
 
         self.closefile()
 
@@ -94,7 +96,12 @@ class interface(QtGui.QMainWindow):
         except:
             QtGui.QMessageBox.information(self, "File detected as read-only", "The file you have selected has been detected and will be opened in read-only mode.")
             ReadOnly = True
-        filetypeanswer = QtGui.QMessageBox.question(self, "NDS ROM or Overlay0?", "What kind of file is this?\nIf it is an Overlay0, then select the Overlay0 button.\nIf it is a NDS ROM, select the NDS ROM button.", "Cancel", "Overlay0", "NDS ROM")
+        if File_Interface.DetectFileType() == "Overlay0":
+            filetypeanswer = 1
+        elif File_Interface.DetectFileType() == "NDS ROM":
+            filetypeanswer = 2
+        else:
+            filetypeanswer = QtGui.QMessageBox.question(self, "NDS ROM or Overlay0?", "Unable to detect the file type.\nIf it is an Overlay0, then select the Overlay0 button.\nIf it is a NDS ROM, select the NDS ROM button.", "Cancel", "Overlay0", "NDS ROM")
         global fileType
         if filetypeanswer == 1:
             fileType = "Overlay0"
@@ -171,7 +178,8 @@ class interface(QtGui.QMainWindow):
         NameDBTable.LookupClassID(self.LookupNameDialog)
 
     def abouttool(self):
-        QtGui.QMessageBox.about(self, "About ClassID Tool","ClassID Tool\n    By nsmbhacking\nClassID Tool is a tool to modify, read, and lookup names for Class IDs from a NSMB ROM or an extracted Overlay0 from a NSMB ROM.")
+        global ToolName
+        QtGui.QMessageBox.about(self, ''.join(["About ", ToolName]) ,''.join([ToolName, "\n    By nsmbhacking\n", ToolName, " is a tool to modify, read, and lookup names for Class IDs from a NSMB ROM or an extracted Overlay0 from a NSMB ROM."]))
 
     # Other misc. functions
     def chooseregion(self):
@@ -273,7 +281,8 @@ class NameDBTable(QtGui.QDialog):
         self.Layout.addWidget(TopLabel)
 
     def LookupClassID(self):
-        self.setWindowTitle("ClassID Tool - Lookup ClassID Names")
+        global ToolName
+        self.setWindowTitle(''.join([ToolName, " - Lookup ClassID Names"]))
 
         self.closebutton = QtGui.QPushButton("Close")
         self.closebutton.clicked.connect(self.close)
@@ -293,7 +302,8 @@ class NameDBTable(QtGui.QDialog):
         self.show()
 
     def ChangeClassID(self, currentSprite):
-        self.setWindowTitle("ClassID Tool - Change ClassID Value")
+        global ToolName
+        self.setWindowTitle(''.join([ToolName, " - Change ClassID Value"]))
 
         self.currentSprite = currentSprite
 
@@ -561,13 +571,24 @@ class File_Interface():
         global NameDB
         return database.lookup(NameDB, ParamA)
 
+    @staticmethod
+    def DetectFileType():
+        global filePath
+        if ovproc.check_header(filePath):
+            return "Overlay0"
+        elif librom.check_header(filePath):
+            return "NDS ROM"
+        else:
+            return False
+
 class Missingfilesdialog(QtGui.QWidget):
     def __init__(self):
         super(Missingfilesdialog, self).__init__()
 
         global Missingfiles
+        global ToolName
 
-        self.ErrorMessage = QtGui.QLabel("ClassID Tool is unable to load without the following file(s):")
+        self.ErrorMessage = QtGui.QLabel(''.join([ToolName, " is unable to load without the following file(s):"]))
         self.MissingList = QtGui.QTextEdit()
         self.MissingList.setPlainText(Missingfiles)
         self.MissingList.setReadOnly(True)
@@ -590,7 +611,7 @@ class Missingfilesdialog(QtGui.QWidget):
 
         self.setLayout(self.Layout)
 
-        self.setWindowTitle("ClassID Tool - Error")
+        self.setWindowTitle(''.join([ToolName, " - Error"]))
 
 class GeneralExceptiondialog(QtGui.QDialog):
     def __init__(self, *args):
@@ -598,12 +619,13 @@ class GeneralExceptiondialog(QtGui.QDialog):
 
         import traceback
         ExceptionDetails = ''.join(traceback.format_exception(*args))
+        global ToolName
 
-        self.ErrorMessage = QtGui.QLabel("ClassID Tool has encountered an error. The details are below:")
+        self.ErrorMessage = QtGui.QLabel(''.join([ToolName, " has encountered an error. The details are below:"]))
         self.MissingList = QtGui.QTextEdit()
         self.MissingList.setPlainText(ExceptionDetails)
         self.MissingList.setReadOnly(True)
-        self.ErrorMessageBottom = QtGui.QLabel("If you want to report this error, please submit these details to ELMario.")
+        self.ErrorMessageBottom = QtGui.QLabel("If you want to report this error, please submit these details to the developer.")
         self.closebutton = QtGui.QPushButton("Close")
         self.closebutton.clicked.connect(self.close)
 
@@ -622,7 +644,7 @@ class GeneralExceptiondialog(QtGui.QDialog):
 
         self.setLayout(self.Layout)
 
-        self.setWindowTitle("ClassID Tool - Error")
+        self.setWindowTitle(''.join([ToolName, " - Error"]))
 
 def exceptionhookstart(*args):
     global ExceptionDialog
@@ -638,6 +660,7 @@ NameDB = None
 PatchOrig = None
 URLList = None
 ReadOnly = None
+ToolName = "ClassID Tool 4.1"
 
 ExceptionDialog = None
 
