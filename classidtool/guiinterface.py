@@ -1,3 +1,19 @@
+'''
+    This file is part of nsmb-tools.
+
+    nsmb-tools is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    nsmb-tools is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with nsmb-tools. If not, see <http://www.gnu.org/licenses/>.
+'''
 # ClassID Tool
 # Friendly GUI interface
 
@@ -116,21 +132,20 @@ class interface(QtGui.QMainWindow):
             FileInfoTab.load_info(self.fileInfoTab)
             ClassIDEditingTab.load_file(self.classIDEditingTab)
         elif filetypeanswer == 2:
-            ndswarning = QtGui.QMessageBox.warning(self, "NDS ROM Warning!", "The Overlay0 in the NDS ROM MUST be decompressed (ex. by using NSMBe 5.2) in order to read the Overlay0 correctly.\nAre you sure you want to continue?", "&Yes", "&No")
-            if ndswarning == 0:
-                fileType = "NDS ROM"
-                self.detectregion()
-                self.openAct.setEnabled(False)
-                self.closeAct.setEnabled(True)
-                if not ReadOnly:                
-                    self.importPatchAct.setEnabled(True)
-                    self.exportPatchAct.setEnabled(True)
-                    self.resetClassIDAct.setEnabled(True)
-                    self.extrasMenu.setEnabled(True)
-                global ROMOvOffset
-                ROMOvOffset = librom.get_overlay_offset(filePath, ovproc.ovoffset(fileRegion))
-                ClassIDEditingTab.load_file(self.classIDEditingTab)
-                FileInfoTab.load_info(self.fileInfoTab)
+            fileType = "NDS ROM"
+            File_Interface.CheckOverlay0()
+            self.detectregion()
+            self.openAct.setEnabled(False)
+            self.closeAct.setEnabled(True)
+            if not ReadOnly:                
+                self.importPatchAct.setEnabled(True)
+                self.exportPatchAct.setEnabled(True)
+                self.resetClassIDAct.setEnabled(True)
+                self.extrasMenu.setEnabled(True)
+            global ROMOvOffset
+            ROMOvOffset = librom.get_overlay_offset(filePath, ovproc.ovoffset(fileRegion))
+            ClassIDEditingTab.load_file(self.classIDEditingTab)
+            FileInfoTab.load_info(self.fileInfoTab)
 
     def closefile(self):
         self.openAct.setEnabled(True)
@@ -581,6 +596,12 @@ class File_Interface():
         else:
             return False
 
+    @staticmethod
+    def CheckOverlay0():
+        global filePath
+        if not librom.CheckOverlay0Decompressed(filePath):
+            librom.DecompressOverlay0(filePath)
+
 class Missingfilesdialog(QtGui.QWidget):
     def __init__(self):
         super(Missingfilesdialog, self).__init__()
@@ -660,7 +681,7 @@ NameDB = None
 PatchOrig = None
 URLList = None
 ReadOnly = None
-ToolName = "ClassID Tool 4.1"
+ToolName = "ClassID Tool 5"
 
 ExceptionDialog = None
 
