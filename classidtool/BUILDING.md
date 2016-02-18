@@ -12,5 +12,5 @@ Steps
 
 Run the following command on the platform you want binaries for:
 ```
-cxfreeze guiinterface.py --target-dir path/to/binary/output/directory
+python setup.py build
 ```
