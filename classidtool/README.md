@@ -1,19 +1,24 @@
 ClassID Tool
 ============
 
-Summary
--------
-ClassID Tool is a tool to modify, read, and lookup names for Class IDs from a NSMB ROM or an extracted Overlay0 from a NSMB ROM. All NSMB ROM Regions are supported.
+ClassID Tool is a tool to modify, read, and lookup names for Class IDs from a NSMB ROM or an extracted Overlay 0 file. All NSMB ROM regions are supported.
 
 Requirements
 ------------
 * Python 3
 * PyQt4
-* Overlay0 or NSMB ROM
+* Overlay 0 or NSMB ROM
+
+Get it
+------
+
+For Windows users, binaries are [provided on the Releases page](https://github.com/Eloston/nsmb-tools/releases)
+
+For other users, just clone the Git repository and go into the `classidtool` directory.
 
 Usage
 -----
-1. Run `main.py` or the main executable
+1. Run it. Those running from the source should run `main.py`
 2. Go to `File -> Open` and select the NSMB ROM or Overlay0 file
 
 ### Patches
@@ -50,5 +55,7 @@ Please leave any problems, questions, or suggestions in the Issue Tracker
 Credits
 -------
 Dirbaio
+
 Treeki
+
 Everyone else on the New Super Mario Bros. Hacking Domain.
