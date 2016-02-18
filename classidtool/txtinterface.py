@@ -22,7 +22,6 @@ import interfaceoverlay
 
 def interfacechooser():
     print("ClassID Tool")
-    print("By nsmbhacking")
     print("---------------")
     while True:
         print("Choose your interface")

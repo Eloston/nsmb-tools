@@ -1,2 +1,0 @@
-{NSMBHD_NameDB#http://nsmbhd.net/spriteclasses.php}
-{Unused_NameDB#http://fw.mooo.com/elton/UnusedClassID}
