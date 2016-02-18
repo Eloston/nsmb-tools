@@ -15,7 +15,7 @@
     along with nsmb-tools. If not, see <http://www.gnu.org/licenses/>.
 '''
 # ClassID Tool
-# Friendly GUI interface
+# GUI interface
 
 from PyQt4 import QtCore, QtGui
 
@@ -187,7 +187,7 @@ class interface(QtGui.QMainWindow):
 
     def abouttool(self):
         global ToolName
-        QtGui.QMessageBox.about(self, ''.join(["About ", ToolName]) ,''.join([ToolName, "\n    By nsmbhacking\n", ToolName, " is a tool to modify, read, and lookup names for Class IDs from a NSMB ROM or an extracted Overlay0 from a NSMB ROM."]))
+        QtGui.QMessageBox.about(self, ''.join(["About ", ToolName]) ,''.join([ToolName, "\n    By Eloston (aka ELMario)\n", ToolName, " is a tool to modify, read, and lookup names for Class IDs from a NSMB ROM or an extracted Overlay0 from a NSMB ROM."]))
 
     # Other misc. functions
     def chooseregion(self):
@@ -649,7 +649,7 @@ ROMOvOffset = None
 NameDB = None
 PatchOrig = None
 ReadOnly = None
-ToolName = "ClassID Tool 5"
+ToolName = "ClassID Tool 6"
 
 ExceptionDialog = None
 
