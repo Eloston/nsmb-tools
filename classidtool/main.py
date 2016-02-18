@@ -649,7 +649,7 @@ ROMOvOffset = None
 NameDB = None
 PatchOrig = None
 ReadOnly = None
-ToolName = "ClassID Tool 6"
+ToolName = "ClassID Tool 6.0"
 
 ExceptionDialog = None
 
