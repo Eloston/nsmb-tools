@@ -3,9 +3,9 @@ Building ClassID Tool Binaries
 
 Requirements
 ------------
-cx_freeze for Python 3
-Python 3
-PyQT 4 for Python 3
+* [cx_freeze for Python 3](http://cx-freeze.sourceforge.net/)
+* [Python 3](https://www.python.org/)
+* [PyQt 4 for Python 3](https://www.riverbankcomputing.com/software/pyqt/download)
 
 Steps
 -----
