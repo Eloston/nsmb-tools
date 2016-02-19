@@ -44,8 +44,8 @@ When reading/writing the Overlay0 in the ROM, make sure you have decompressed th
 
 You cannot read, or edit Sprite 0. For some reason, Sprite 0 will always crash the game, no matter the ClassID. You will get an error trying to read or edit Sprite 0
 
-Generating Portable Binaries
-----------------------------
+Generating Binaries
+-------------------
 See [BUILDING](BUILDING.md)
 
 Contributing
