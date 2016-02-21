@@ -44,7 +44,7 @@ def programfile_path(FILENAME):
     Return absolute path to a ClassID Tool program file
     '''
     basepath = os.path.dirname(sys.argv[0])
-    final_path = os.path.join(basepath, FILENAME)
+    final_path = os.path.join(basepath, "resources", FILENAME)
     return final_path
 
 def check_file(PATH):

@@ -27,10 +27,30 @@ if sys.platform == 'win32':
     base = 'Win32GUI'
     target_name += ".exe"
 
+directory_table = [ # https://msdn.microsoft.com/en-us/library/windows/desktop/aa368295(v=vs.85).aspx
+    (
+        "ProgramMenuFolder",
+        "TARGETDIR",
+        "."
+    ),
+    (
+        "ClassIDToolProgramMenuFolder",
+        "ProgramMenuFolder",
+        "ClassID Tool"
+    )
+]
+
+createfolder_table = [
+    (
+        "ClassIDToolProgramMenuFolder",
+        "TARGETDIR"
+    )
+]
+
 shortcut_table = [ # http://stackoverflow.com/questions/15734703/use-cx-freeze-to-create-an-msi-that-adds-a-shortcut-to-the-desktop
     (
-        "DesktopShortcut",        # Shortcut
-        "DesktopFolder",          # Directory_
+        "AppShortcut",        # Shortcut
+        "ClassIDToolProgramMenuFolder",          # Directory_
         "ClassID Tool",           # Name
         "TARGETDIR",              # Component_
         "[TARGETDIR]ClassIDTool.exe",# Target
@@ -43,11 +63,11 @@ shortcut_table = [ # http://stackoverflow.com/questions/15734703/use-cx-freeze-t
         'TARGETDIR'               # WkDir
     ),
     (
-        "ProgramMenuShortcut",        # Shortcut
-        "ProgramMenuFolder",          # Directory_
-        "ClassID Tool",           # Name
+        "ResourcesDirShortcut",        # Shortcut
+        "ClassIDToolProgramMenuFolder",          # Directory_
+        "Open Resources Folder",           # Name
         "TARGETDIR",              # Component_
-        "[TARGETDIR]ClassIDTool.exe",# Target
+        "[TARGETDIR]resources",# Target
         None,                     # Arguments
         None,                     # Description
         None,                     # Hotkey
@@ -58,32 +78,45 @@ shortcut_table = [ # http://stackoverflow.com/questions/15734703/use-cx-freeze-t
     )
 ]
 
+removefile_table = [
+    (
+        "RemoveShortcutsFromFolder",
+        "TARGETDIR",
+        None,
+        "ClassIDToolProgramMenuFolder",
+        2
+    )
+]
+
 property_table = [
-    ("WhichUsers", "ALL"),
+    ("WhichUsers", "ALL")
 ]
 
 options = {
     'build_exe': {
         'includes': 'atexit',
         'include_msvcr': True,
-        'include_files': ["NameDatabase", "PatchOriginal"]
+        'include_files': ["resources"]
     },
     'bdist_msi': {
         "add_to_path": False,
         "upgrade_code": "ClassIDTool",
         "data": { # https://msdn.microsoft.com/en-us/library/windows/desktop/aa368259(v=vs.85).aspx
             "Shortcut": shortcut_table,
-            "Property": property_table
+            "Property": property_table,
+            "Directory": directory_table,
+            "CreateFolder": createfolder_table,
+            "RemoveFile": removefile_table
         }
     }
 }
 
 executables = [
-    Executable('main.py', base=base, targetName=target_name, shortcutName="ClassID Tool")
+    Executable('main.py', base=base, targetName=target_name)
 ]
 
 setup(name='ClassID Tool',
-    version="6.0",
+    version="6.1",
     description='Modify Sprite ID to Class ID mappings for NSMB ROMs',
     options=options,
     executables=executables

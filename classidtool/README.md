@@ -30,7 +30,10 @@ The format of an entry is as follows:
 ```
 Where `sprite_id` is substituted with the Sprite ID, and `class_id` is substituted with the Class ID.
 
-### NameDatabase file
+### Files
+There are several files that are helpful to know about located in the `resources` directory:
+
+#### NameDatabase file
 This file defines the names for the Class IDs. It is a text file with multiple entries.
 
 Each entry has the following format:
@@ -38,6 +41,15 @@ Each entry has the following format:
 {class_id#name}
 ```
 Where `class_id` is the Class ID, and `name` is the corresponding name. Blank lines and lines lines starting with `#` are ignored.
+
+#### URLList file
+This file defines URLs used for updating database files. Right now, it only contains the update URL for the NameDatabase file. You shouldn't need to modify this file under normal circumstances.
+
+The format of the URLList file is as follows:
+```
+{NameDatabase_Update#update_url}
+```
+Where `update_url` is the URL to the new NameDatabase file.
 
 ### Notes
 When reading/writing the Overlay0 in the ROM, make sure you have decompressed the Overlay0 (by pressing Decompress Overlay for the OV 0 item in the latest revisions of NSMBe), otherwise the tool will not be able to read/write ClassIDs.
