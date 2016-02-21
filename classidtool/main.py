@@ -23,6 +23,7 @@ import librom
 import ovproc
 import libpatch
 import libmisc
+import libupdate
 import database
 import os.path
 
@@ -54,6 +55,8 @@ class interface(QtGui.QMainWindow):
         self.lookupnameAct = QtGui.QAction("&Lookup ClassID Name", self, statusTip="Lookup the name of a ClassID", triggered=self.lookupname)
         self.resetClassIDAct = QtGui.QAction("&Reset ClassID values", self, statusTip="Restore the original ClassID values", triggered=self.resetClassID)
 
+        self.updateNameDBAct = QtGui.QAction("&NameDatabase", self, statusTip="Update the NameDatabase file", triggered=self.updateNameDB)
+
         self.setascending_extraAct = QtGui.QAction("&Ascending values 1:1 mapping", self, statusTip="Sprite # = ClassID!", triggered=self.setascending_extra)
 
         self.helpAct = QtGui.QAction(''.join(["&About ", ToolName]), self, statusTip=''.join(["View information about ", ToolName]), triggered=self.abouttool)
@@ -73,6 +76,9 @@ class interface(QtGui.QMainWindow):
         self.toolMenu.addAction(self.lookupnameAct)
         self.toolMenu.addAction(self.resetClassIDAct)
         self.toolMenu.addSeparator()
+
+        self.updateMenu = self.toolMenu.addMenu("&Update")
+        self.updateMenu.addAction(self.updateNameDBAct)
 
         self.extrasMenu = self.toolMenu.addMenu("&Extras")
         self.extrasMenu.addAction(self.setascending_extraAct)
@@ -210,6 +216,29 @@ class interface(QtGui.QMainWindow):
         File_Interface.file_region()
         if fileRegion == 'UNK':
             self.chooseregion()
+
+    def updateNameDB(self):
+        try:
+            testreadonly = open(libmisc.programfile_path("NameDatabase"), mode='r+b')
+            testreadonly.close()
+        except:
+            QtGui.QMessageBox.critical(self, "Error while updating", "The NameDatabase cannot be edited.\nMake sure you can edit NameDatabase before updating.", "OK")
+            return None
+        result_code, result_message = libupdate.update_namedatabase(libmisc.programfile_path("NameDatabase"), libmisc.programfile_path("URLList"))
+        if result_code == "urllist-parse-failure":
+            QtGui.QMessageBox.critical(self, "Error while updating", "Failed to read the URLList file.\nCheck to see if the file is readable and is not corrupt.\nError message: " + result_message, "OK")
+        elif result_code == "download-failure":
+            QtGui.QMessageBox.critical(self, "Error while updating", "Failed to download the new NameDatabase file.\nCheck to see if the URL in the URLList file is downloadable.\nError message: " + result_message, "OK")
+        elif result_code == "write-failure":
+            QtGui.QMessageBox.critical(self, "Error while updating", "The new NameDatabase cannot be written.\nMake sure you can edit the NameDatabase file before trying again.\nError message: " + result_message, "OK")
+        elif result_code == "success":
+            global NameDB
+            global fileType
+            NameDB = database.readdb(libmisc.programfile_path("NameDatabase"))
+            if not fileType == None:
+                self.classIDEditingTab.close_file()
+                self.classIDEditingTab.load_file()
+            QtGui.QMessageBox.information(self, "Updating results", "The NameDB has updated sucessfully", "OK")
 
     def setascending_extra(self):
         '''
@@ -615,7 +644,7 @@ class GeneralExceptiondialog(QtGui.QDialog):
         self.MissingList = QtGui.QTextEdit()
         self.MissingList.setPlainText(ExceptionDetails)
         self.MissingList.setReadOnly(True)
-        self.ErrorMessageBottom = QtGui.QLabel("If you want to report this error, please submit these details to the developer.")
+        self.ErrorMessageBottom = QtGui.QLabel("You may be seeing this if your Overlay 0 or ROM file is corrupt.<br />If this is not the case, please submit these details to the GitHub Issue Tracker: <a href=\"https://github.com/Eloston/nsmb-tools/issues\">https://github.com/Eloston/nsmb-tools/issues</a>")
         self.closebutton = QtGui.QPushButton("Close")
         self.closebutton.clicked.connect(self.close)
 
@@ -649,7 +678,7 @@ ROMOvOffset = None
 NameDB = None
 PatchOrig = None
 ReadOnly = None
-ToolName = "ClassID Tool 6.0"
+ToolName = "ClassID Tool 6.1"
 
 ExceptionDialog = None
 
@@ -669,6 +698,8 @@ if __name__ == '__main__':
         PatchOrig = database.read_patch(libmisc.programfile_path("PatchOriginal"))
     except:
         Missingfiles = Missingfiles + 'PatchOriginal\n'
+    if not os.path.exists(libmisc.programfile_path("URLList")):
+        Missingfiles = Missingfiles + 'URLList\n'
     if len(Missingfiles) == 0:
             Interface = interface()
             Interface.show()
